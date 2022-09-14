@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Assignment_1</string>
+    <string name="logReg">Login/Register</string>
+    <string name="order">Order Now</string>
+</resources>
