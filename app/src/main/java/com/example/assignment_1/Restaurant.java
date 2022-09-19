@@ -11,13 +11,27 @@ public class Restaurant
 
     public Restaurant( int resID, String name, int logo )
     {
+        this.menu = getMenu();
         this.resID = resID;
         this.name = name;
         this.logo = logo;
     }
 
-    public static void getMenu()
+    public List<FoodItem> getMenu()
     {
         //load FoodItems from database into menu
+        return this.menu;
+    }
+    public String getName()
+    {
+        return this.name;
+    }
+    public int getResID()
+    {
+        return this.resID;
+    }
+    public int getLogo()
+    {
+        return this.logo;
     }
 }
