@@ -12,6 +12,15 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //specials home page
+
+        //load restaurant selection
+
+        //load food selection
+
+        //checkout, view/edit order
+
+        //login, register
 
     }
 
