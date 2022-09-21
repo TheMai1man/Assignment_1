@@ -4,17 +4,18 @@ public class OrderSchema
 {
     public static class OrderTable
     {
-        //name will change to reflect order number
+        public static final String NAME = "orders";
         public static class Cols
         {
             public static final String ITEM_ID = "item_id";
             public static final String QTY = "qty";
+            public static final String ORDER_ID = "order_id";
         }
     }
 
     public static class OrderHistoryTable
     {
-        public static final String NAME = "orders";
+        public static final String NAME = "order_history";
         public static class Cols
         {
             public static final String USER_ID = "user_id";

@@ -22,6 +22,16 @@ public class MainActivity extends AppCompatActivity
 
         FragmentManager fm = getSupportFragmentManager();
 
+        //specials home page
+
+        SpecialsFragment specialsFragment = (SpecialsFragment) fm.findFragmentById(R.id.frameLayout);
+        if(specialsFragment == null)
+        {
+            specialsFragment = new SpecialsFragment();
+        }
+        fm.beginTransaction().add(R.id.frameLayout, specialsFragment).commit();
+
+        //load restaurant selection
         order.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -42,16 +52,21 @@ public class MainActivity extends AppCompatActivity
 
 
 
-        //specials home page
 
-        //load restaurant selection
 
         //load food selection
 
         //checkout, view/edit order
 
         //login, register
-
+        login.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                //login or register
+            }
+        });
     }
 
 }

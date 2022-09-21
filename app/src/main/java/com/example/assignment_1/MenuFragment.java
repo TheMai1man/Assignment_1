@@ -14,20 +14,14 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class RestaurantFragment extends Fragment
+import java.util.List;
+
+public class MenuFragment extends Fragment
 {
     private CommonData mViewModel;
-    private RestaurantList data;
+    private Restaurant data;
 
-    public RestaurantFragment() {}
-
-    @Override
-    public void onCreate(Bundle b)
-    {
-        super.onCreate(b);
-        data = new RestaurantList();
-        data.load(getActivity());
-    }
+    public MenuFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup ui, Bundle bundle)
@@ -36,11 +30,11 @@ public class RestaurantFragment extends Fragment
 
         RecyclerView rv = (RecyclerView) view.findViewById(R.id.selectorRecyclerView);
         rv.setLayoutManager(new LinearLayoutManager( getActivity(),
-                LinearLayoutManager.VERTICAL, false) );
+                LinearLayoutManager.VERTICAL, false ));
 
         if(data == null)
         {
-            data = new RestaurantList();
+            data = mViewModel.getSelectedRestaurant();
         }
 
         MyAdapter adapter = new MyAdapter(data);
@@ -54,17 +48,15 @@ public class RestaurantFragment extends Fragment
     {
         super.onViewCreated(view, savedInstanceState);
         mViewModel = new ViewModelProvider(requireActivity()).get(CommonData.class);
-
-        //handle user interaction here if outside of recycler view
     }
 
     private class MyAdapter extends RecyclerView.Adapter<MyDataVHolder>
     {
-        RestaurantList data;
+        Restaurant data;
 
-        public MyAdapter(RestaurantList rd)
+        public MyAdapter(Restaurant r)
         {
-            this.data = rd;
+            this.data = r;
         }
 
         @Override
@@ -84,40 +76,42 @@ public class RestaurantFragment extends Fragment
         @Override
         public void onBindViewHolder(MyDataVHolder vh, int index)
         {
-            Restaurant r = data.get(index);
-            vh.bind(r);
+            FoodItem fi = data.get(index);
+            vh.bind(fi);
 
-            vh.restaurantView.setOnClickListener(new View.OnClickListener()
+            vh.foodView.setOnClickListener(new View.OnClickListener()
             {
                 @Override
                 public void onClick(View view)
                 {
-                    mViewModel.setSelectedRestaurant(r);
+                    //pop up quantity selection and add to order
                 }
             });
-            //here we can set anything specific to the viewHolder that may change during runtime
-            //eg. with an onClickListener
         }
     }
 
     private static class MyDataVHolder extends RecyclerView.ViewHolder
     {
-        private final TextView textView;
+        private final TextView nameView, priceView, descView;
         private final ImageView imageView;
-        private final ConstraintLayout restaurantView;
+        private final ConstraintLayout foodView;
 
         public MyDataVHolder(LayoutInflater li, ViewGroup parent)
         {
-            super( li.inflate(R.layout.restaurant_selection, parent, false) );
-            textView = (TextView) itemView.findViewById(R.id.name);
-            imageView = (ImageView) itemView.findViewById(R.id.logo);
-            restaurantView = (ConstraintLayout) itemView.findViewById(R.id.restaurantSelection);
+            super( li.inflate(R.layout.food_selection, parent, false) );
+            nameView = (TextView) itemView.findViewById(R.id.name);
+            priceView = (TextView) itemView.findViewById(R.id.price);
+            descView = (TextView) itemView.findViewById(R.id.description);
+            imageView = (ImageView) itemView.findViewById(R.id.photo);
+            foodView = (ConstraintLayout) itemView.findViewById(R.id.foodSelection);
         }
 
-        public void bind(Restaurant data)
+        public void bind(FoodItem data)
         {
-            textView.setText(data.getName());
-            imageView.setImageResource(data.getLogo());
+            nameView.setText(data.getName());
+            priceView.setText( String.format("%.2f", data.getPrice() ) );
+            descView.setText(data.getDescription());
+            imageView.setImageResource(data.getPhoto());
         }
     }
 }
