@@ -1,5 +1,6 @@
 package com.example.assignment_1;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import android.os.Bundle;
@@ -29,7 +30,6 @@ public class QuantityFragment extends Fragment
     {
         View view = inflater.inflate(R.layout.fragment_quantity, ui, false);
 
-
         decrease = view.findViewById(R.id.decreaseQty);
         increase = view.findViewById(R.id.increaseQty);
         qty = view.findViewById(R.id.qty);
@@ -38,7 +38,6 @@ public class QuantityFragment extends Fragment
         photo = view.findViewById(R.id.imageView);
         confirm = view.findViewById(R.id.confirm);
 
-        mViewModel = new ViewModelProvider(this).get(CommonData.class);
         data = mViewModel.getSelectedFoodItem();
 
         ii = 1;
@@ -75,21 +74,22 @@ public class QuantityFragment extends Fragment
             @Override
             public void onClick(View view)
             {
-                if(ii > 0)
+                if(ii >= 0)
                 {
-
+                    mViewModel.setQtyConfirmed(ii);
                 }
                 else
                 {
-                    //do not add to order
+                    //do nothing, pop toast to user
                 }
             }
         });
 
+        return view;
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState)
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState)
     {
         super.onViewCreated(view, savedInstanceState);
         mViewModel = new ViewModelProvider(requireActivity()).get(CommonData.class);

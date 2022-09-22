@@ -3,4 +3,6 @@
     <string name="logReg">Login/Register</string>
     <string name="order">Order Now</string>
     <string name="logo">Restaurant logo</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

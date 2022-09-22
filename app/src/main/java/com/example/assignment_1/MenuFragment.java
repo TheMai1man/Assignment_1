@@ -1,13 +1,12 @@
 package com.example.assignment_1;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
@@ -15,14 +14,14 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.List;
-
 public class MenuFragment extends Fragment
 {
     private CommonData mViewModel;
     private Restaurant data;
 
     public MenuFragment() {}
+
+    private Button checkout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup ui, Bundle bundle)
@@ -33,6 +32,8 @@ public class MenuFragment extends Fragment
         rv.setLayoutManager(new LinearLayoutManager( getActivity(),
                 LinearLayoutManager.VERTICAL, false ));
 
+        checkout = (Button) view.findViewById(R.id.checkoutButton);
+
         if(data == null)
         {
             data = mViewModel.getSelectedRestaurant();
@@ -40,6 +41,15 @@ public class MenuFragment extends Fragment
 
         MyAdapter adapter = new MyAdapter(data);
         rv.setAdapter(adapter);
+
+        checkout.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                mViewModel.setCheckout(true);
+            }
+        });
 
         return view;
     }
