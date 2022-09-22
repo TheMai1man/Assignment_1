@@ -3,11 +3,7 @@ package com.example.assignment_1;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import com.example.assignment_1.OrderSchema.FoodItemTable;
-import com.example.assignment_1.OrderSchema.OrderTable;
-import com.example.assignment_1.OrderSchema.OrderHistoryTable;
-import com.example.assignment_1.OrderSchema.RestaurantTable;
-import com.example.assignment_1.OrderSchema.UserTable;
+import com.example.assignment_1.OrderSchema.*;
 
 public class OrderDbHelper extends SQLiteOpenHelper
 {
@@ -50,6 +46,10 @@ public class OrderDbHelper extends SQLiteOpenHelper
                 OrderTable.Cols.ITEM_ID + " INTEGER, " +
                 OrderTable.Cols.QTY + " INTEGER, " +
                 OrderTable.Cols.ORDER_ID + " INTEGER)" );
+
+        db.execSQL( "CREATE TABLE " + CurrentOrder.NAME + "(" +
+                CurrentOrder.Cols.ITEM_ID + " INTEGER, " +
+                CurrentOrder.Cols.QTY + " INTEGER)" );
     }
 
     @Override

@@ -13,10 +13,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/order"
-        android:textSize="20sp"
+        android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        />
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/startOrder"
+        app:layout_constraintBottom_toTopOf="@id/frameLayout"
+        android:textSize="20sp"
+        android:textAlignment="center"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         />
@@ -27,8 +41,10 @@
         android:layout_height="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/startOrder"
+        app:layout_constraintTop_toBottomOf="@id/title"
         app:layout_constraintBottom_toTopOf="@id/loginRegister"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         />
 
     <Button

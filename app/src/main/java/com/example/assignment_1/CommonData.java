@@ -6,6 +6,7 @@ public class CommonData
 {
     public MutableLiveData<Restaurant> selectedRestaurant;
     public MutableLiveData<Integer> loggedInUser;
+    public MutableLiveData<FoodItem> selectedFoodItem;
 
     public CommonData()
     {
@@ -14,6 +15,9 @@ public class CommonData
 
         loggedInUser = new MutableLiveData<Integer>();
         loggedInUser.setValue(null);
+
+        selectedFoodItem = new MutableLiveData<FoodItem>();
+        selectedFoodItem.setValue(null);
     }
 
     public Restaurant getSelectedRestaurant()
@@ -34,5 +38,15 @@ public class CommonData
     public void setLoggedInUser(int value)
     {
         this.loggedInUser.setValue(value);
+    }
+
+    public void setSelectedFoodItem( FoodItem value )
+    {
+        this.selectedFoodItem.setValue(value);
+    }
+
+    public FoodItem getSelectedFoodItem()
+    {
+        return selectedFoodItem.getValue();
     }
 }

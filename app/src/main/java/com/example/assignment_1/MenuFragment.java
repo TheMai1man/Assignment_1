@@ -1,5 +1,6 @@
 package com.example.assignment_1;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,9 +27,9 @@ public class MenuFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup ui, Bundle bundle)
     {
-        View view = inflater.inflate(R.layout.fragment_selector, ui, false);
+        View view = inflater.inflate(R.layout.fragment_menu, ui, false);
 
-        RecyclerView rv = (RecyclerView) view.findViewById(R.id.selectorRecyclerView);
+        RecyclerView rv = (RecyclerView) view.findViewById(R.id.menuRecyclerView);
         rv.setLayoutManager(new LinearLayoutManager( getActivity(),
                 LinearLayoutManager.VERTICAL, false ));
 
@@ -85,6 +86,7 @@ public class MenuFragment extends Fragment
                 public void onClick(View view)
                 {
                     //pop up quantity selection and add to order
+                    mViewModel.setSelectedFoodItem(fi);
                 }
             });
         }
