@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class CheckoutFragment extends Fragment
 {
@@ -128,11 +129,13 @@ public class CheckoutFragment extends Fragment
                         else
                         {
                             //toast to user, "serving quantity invalid"
+                            Toast.makeText(getActivity(), "Quantity invalid!", Toast.LENGTH_LONG).show();
                         }
                     }
                     else
                     {
                         //toast to user, "serving quantity invalid"
+                        Toast.makeText(getActivity(), "Quantity invalid!", Toast.LENGTH_LONG).show();
                     }
                 }
             });

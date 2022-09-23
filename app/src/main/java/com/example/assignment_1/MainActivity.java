@@ -4,12 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import com.example.assignment_1.OrderSchema.*;
-import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -23,22 +21,16 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         //viewModel for fragment and activity communication
-        mViewModel = new ViewModelProvider(this).get(CommonData.class);
+        mViewModel = new ViewModelProvider(MainActivity.this).get(CommonData.class);
 
         //Multifunction Buttons which will hide and reappear during runtime
         order = findViewById(R.id.startOrder);
         login = findViewById(R.id.loginRegister);
 
-        this.db = new OrderDbHelper( this.getApplicationContext() ).getWritableDatabase();
         FragmentManager fm = getSupportFragmentManager();
 
         //Load specials home page fragment
-        SpecialsFragment specialsFragment = (SpecialsFragment) fm.findFragmentById(R.id.frameLayout);
-        if(specialsFragment == null)
-        {
-            specialsFragment = new SpecialsFragment();
-        }
-        fm.beginTransaction().add(R.id.frameLayout, specialsFragment).commit();
+        setUpHome();
 
 
         //load restaurant selection fragment
@@ -72,6 +64,9 @@ public class MainActivity extends AppCompatActivity
                     menuFragment = new MenuFragment();
                 }
                 fm.beginTransaction().add(R.id.frameLayout, menuFragment).commit();
+
+                order.setVisibility(View.GONE);
+                login.setVisibility(View.GONE);
             }
         });
 
@@ -90,6 +85,9 @@ public class MainActivity extends AppCompatActivity
                         quantityFragment = new QuantityFragment();
                     }
                     fm.beginTransaction().add(R.id.frameLayout, quantityFragment).commit();
+
+                    order.setVisibility(View.GONE);
+                    login.setVisibility(View.GONE);
                 }
             }
         });
@@ -108,10 +106,13 @@ public class MainActivity extends AppCompatActivity
                 }
                 fm.beginTransaction().add(R.id.frameLayout, menuFragment).commit();
 
+                order.setVisibility(View.GONE);
+                login.setVisibility(View.GONE);
 
                 if(mViewModel.getQtyConfirmed() ==  0 )
                 {
                     //toast: "qty '0' invalid, bucket unchanged"
+                    Toast.makeText(MainActivity.this, "Qty of 0 invalid, bucket unchanged.", Toast.LENGTH_LONG).show();
                 }
 
             }
@@ -132,6 +133,9 @@ public class MainActivity extends AppCompatActivity
                         checkoutFragment = new CheckoutFragment();
                     }
                     fm.beginTransaction().add(R.id.frameLayout, checkoutFragment).commit();
+
+                    order.setVisibility(View.GONE);
+                    login.setVisibility(View.GONE);
                 }
             }
         });
@@ -145,16 +149,18 @@ public class MainActivity extends AppCompatActivity
             {
                 if( mViewModel.getCheckoutConfirm() )
                 {
-                    if( mViewModel.getLoggedInUser() == 0 )
+                    if( mViewModel.getLoggedInUser() == null )
                     {
                         getUserLoggedIn();
-                        mViewModel.loggedInUser.observe(this, new Observer<Integer>()
+                        mViewModel.loggedInUser.observe(MainActivity.this, new Observer<User>()
                         {
                             @Override
-                            public void onChanged(Integer integer)
+                            public void onChanged(User user)
                             {
                                 //finalise order
-
+                                mViewModel.getOrderList().saveOrder(mViewModel.getLoggedInUser());
+                                //notify user of completed order with toast
+                                Toast.makeText(MainActivity.this, "Order complete!", Toast.LENGTH_LONG).show();
                                 //return to specials/home page
                                 setUpHome();
                             }
@@ -163,7 +169,9 @@ public class MainActivity extends AppCompatActivity
                     else
                     {
                         //finalise order
-
+                        mViewModel.getOrderList().saveOrder(mViewModel.getLoggedInUser());
+                        //notify user of completed order with toast
+                        Toast.makeText(MainActivity.this, "Order complete!", Toast.LENGTH_LONG).show();
                         //return to specials/home page
                         setUpHome();
 
@@ -173,20 +181,42 @@ public class MainActivity extends AppCompatActivity
         });
 
 
-        //login button handler
+        //login and history button handler
         login.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View view)
             {
-                if( mViewModel.getLoggedInUser() == 0 )
+                if( mViewModel.getLoggedInUser() == null )
                 {
                     getUserLoggedIn();
+                    mViewModel.loggedInUser.observe(this, new Observer<User>()
+                    {
+                        @Override
+                        public void onChanged(User user)
+                        {
+                            setUpHome();
+                        }
+                    });
+
+                    //order history function not yet added
                 }
+                /*
                 else
                 {
+                    //hide order and login buttons
+                    order.setVisibility(View.GONE);
+                    login.setVisibility(View.GONE);
+
                     //order history of logged in user
+                    HistoryFragment historyFragment = (HistoryFragment) fm.findFragmentById(R.id.frameLayout);
+                    if(historyFragment == null)
+                    {
+                        historyFragment = new HisoryFragment();
+                    }
+                    fm.beginTransaction().add(R.id.frameLayout, historyFragment).commit();
                 }
+                */
             }
         });
 
@@ -203,6 +233,9 @@ public class MainActivity extends AppCompatActivity
             loginFragment = new LoginFragment();
         }
         fm.beginTransaction().add(R.id.frameLayout, loginFragment).commit();
+
+        order.setVisibility(View.GONE);
+        login.setVisibility(View.GONE);
     }
 
 
@@ -222,7 +255,7 @@ public class MainActivity extends AppCompatActivity
         login.setVisibility(View.VISIBLE);
 
         //set login button text based on user log in status
-        if( mViewModel.getLoggedInUser() == 0 )
+        if( mViewModel.getLoggedInUser() == null )
         {
             login.setText("Login");
         }

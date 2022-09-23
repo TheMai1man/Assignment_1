@@ -37,4 +37,17 @@ public class MyCursor extends CursorWrapper
         return getInt( getColumnIndex( OrderHistoryTable.Cols.ORDER_ID ) );
     }
 
+    public User getUser()
+    {
+        int id = getInt( getColumnIndex( UserTable.Cols.USER_ID ) );
+        String email = getString( getColumnIndex( UserTable.Cols.EMAIL ) );
+        String pwd = getString( getColumnIndex( UserTable.Cols.PWD ) );
+        return new User( email, pwd, id );
+    }
+
+    public void setUser()
+    {
+
+    }
+
 }

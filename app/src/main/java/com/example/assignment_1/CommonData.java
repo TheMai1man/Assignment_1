@@ -5,20 +5,21 @@ import androidx.lifecycle.MutableLiveData;
 public class CommonData
 {
     public MutableLiveData<Restaurant> selectedRestaurant;
-    public MutableLiveData<Integer> loggedInUser;
+    public MutableLiveData<User> loggedInUser;
     public MutableLiveData<FoodItem> selectedFoodItem;
     public MutableLiveData<Integer> qtyConfirmed;
     public MutableLiveData<Boolean> checkout;
     public MutableLiveData<Boolean> checkoutConfirm;
     public MutableLiveData<OrderList> orderList;
+    public MutableLiveData<UserList> userList;
 
     public CommonData()
     {
         selectedRestaurant = new MutableLiveData<Restaurant>();
         selectedRestaurant.setValue(null);
 
-        loggedInUser = new MutableLiveData<Integer>();
-        loggedInUser.setValue(0);
+        loggedInUser = new MutableLiveData<User>();
+        loggedInUser.setValue(null);
 
         selectedFoodItem = new MutableLiveData<FoodItem>();
         selectedFoodItem.setValue(null);
@@ -34,6 +35,9 @@ public class CommonData
 
         orderList = new MutableLiveData<OrderList>();
         orderList.setValue(null);
+
+        userList = new MutableLiveData<UserList>();
+        userList.setValue(null);
     }
 
     public Restaurant getSelectedRestaurant()
@@ -45,11 +49,11 @@ public class CommonData
         this.selectedRestaurant.setValue(value);
     }
 
-    public int getLoggedInUser()
+    public User getLoggedInUser()
     {
         return loggedInUser.getValue();
     }
-    public void setLoggedInUser(int value)
+    public void setLoggedInUser(User value)
     {
         this.loggedInUser.setValue(value);
     }
@@ -97,5 +101,14 @@ public class CommonData
     public OrderList getOrderList()
     {
         return this.orderList.getValue();
+    }
+
+    public void setUserList( UserList value )
+    {
+        this.userList.setValue(value);
+    }
+    public UserList getUserList()
+    {
+        return this.userList.getValue();
     }
 }

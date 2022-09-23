@@ -1,5 +1,6 @@
 package com.example.assignment_1;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -50,6 +51,31 @@ public class OrderDbHelper extends SQLiteOpenHelper
         db.execSQL( "CREATE TABLE " + CurrentOrder.NAME + "(" +
                 CurrentOrder.Cols.ITEM_ID + " INTEGER, " +
                 CurrentOrder.Cols.QTY + " INTEGER)" );
+
+        //Here we hard code adding restaurants and their menu items to the database
+        Restaurant restautants[] = new Restaurant[] {
+                new Restaurant( 1, "place1", R.drawable.logo_one ),
+                new Restaurant( 2, "place2", R.drawable.logo_two ),
+                new Restaurant( 3, "place3", R.drawable.logo_three ),
+                new Restaurant( 4, "place4", R.drawable.logo_four ),
+                new Restaurant( 5, "place5", R.drawable.logo_five ),
+                new Restaurant( 6, "place6", R.drawable.logo_six ),
+                new Restaurant( 7, "place1", R.drawable.logo_seven ),
+                new Restaurant( 8, "place1", R.drawable.logo_eight ),
+                new Restaurant( 9, "place1", R.drawable.logo_nine ),
+                new Restaurant( 10, "place1", R.drawable.logo_ten ),
+                new Restaurant( 11, "place1", R.drawable.logo_eleven ),
+                new Restaurant( 12, "place1", R.drawable.logo_twelve )
+        };
+
+        FoodItem items[] = new FoodItem[] {
+                new FoodItem( 1, 1, "food1", "food1 description", 19.99, R.drawable. ),
+        }
+
+        ContentValues cv = new ContentValues();
+
+
+        db.insert( RestaurantTable.NAME, null, cv );
     }
 
     @Override

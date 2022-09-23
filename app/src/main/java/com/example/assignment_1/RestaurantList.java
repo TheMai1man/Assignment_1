@@ -3,11 +3,13 @@ package com.example.assignment_1;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import com.example.assignment_1.OrderSchema.*;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class RestaurantList
 {
-    private List<Restaurant> restaurantList;
+    private List<Restaurant> restaurantList = new ArrayList<>();
     private SQLiteDatabase db;
 
     public RestaurantList() {}

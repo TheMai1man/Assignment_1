@@ -3,6 +3,8 @@ package com.example.assignment_1;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class QuantityFragment extends Fragment
 {
@@ -30,13 +33,13 @@ public class QuantityFragment extends Fragment
     {
         View view = inflater.inflate(R.layout.fragment_quantity, ui, false);
 
-        decrease = view.findViewById(R.id.decreaseQty);
-        increase = view.findViewById(R.id.increaseQty);
-        qty = view.findViewById(R.id.qty);
-        name = view.findViewById(R.id.name);
-        description = view.findViewById(R.id.description);
-        photo = view.findViewById(R.id.imageView);
-        confirm = view.findViewById(R.id.confirm);
+        decrease = (Button) view.findViewById(R.id.decreaseQty);
+        increase = (Button) view.findViewById(R.id.increaseQty);
+        qty = (EditText) view.findViewById(R.id.qty);
+        name = (TextView) view.findViewById(R.id.name);
+        description = (TextView) view.findViewById(R.id.description);
+        photo = (ImageView) view.findViewById(R.id.imageView);
+        confirm = (Button) view.findViewById(R.id.confirm);
 
         data = mViewModel.getSelectedFoodItem();
 
@@ -83,6 +86,7 @@ public class QuantityFragment extends Fragment
                 else if( ii < 0 )
                 {
                     //do nothing, pop toast to user
+                    Toast.makeText(getActivity(), "Quantity invalid!", Toast.LENGTH_LONG).show();
                 }
                 else
                 {

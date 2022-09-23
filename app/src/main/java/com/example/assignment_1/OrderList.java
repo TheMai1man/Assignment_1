@@ -46,6 +46,7 @@ public class OrderList {
             ContentValues cv = new ContentValues();
             cv.put(CurrentOrder.Cols.ITEM_ID, item.getItemID());
             cv.put(CurrentOrder.Cols.QTY, qty);
+            db.insert( CurrentOrder.NAME, null, cv );
             //add to list
             orderList.add(new Order(item, qty));
         }
@@ -114,7 +115,7 @@ public class OrderList {
         return o;
     }
 
-    public void saveToHistory(int user)
+    public void saveOrder(User user)
     {
         int ii = 0;
         int orderNum = newOrderNum();
@@ -131,10 +132,10 @@ public class OrderList {
             db.insert(OrderTable.NAME, null, cv);
         }
 
-        saveOrder(orderNum, totalPrice, user);
+        saveHistory(orderNum, totalPrice, user.getId());
     }
 
-    public void saveOrder(int orderId, double price, int userId)
+    public void saveHistory(int orderId, double price, int userId)
     {
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yy - hh:mm aaa");
@@ -143,7 +144,8 @@ public class OrderList {
         ContentValues cv = new ContentValues();
         cv.put( OrderHistoryTable.Cols.DATE_TIME, date );
         cv.put( OrderHistoryTable.Cols.USER_ID, userId );
-        cv.put
+        cv.put( OrderHistoryTable.Cols.COST, price );
+        cv.put( OrderHistoryTable.Cols.ORDER_ID, orderId );
         db.insert(OrderHistoryTable.NAME, null, cv);
     }
 
@@ -171,6 +173,6 @@ public class OrderList {
             cursor.close();
         }
 
-        return num;
+        return num + 1;
     }
 }

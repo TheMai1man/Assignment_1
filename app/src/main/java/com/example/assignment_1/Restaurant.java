@@ -1,17 +1,14 @@
 package com.example.assignment_1;
 
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import com.example.assignment_1.OrderSchema.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Restaurant
 {
-    private List<FoodItem> menu;
+    private List<FoodItem> menu = new ArrayList<>();
     private final int resID;
     private final String name;
     private final int logo;
-    private SQLiteDatabase db;
 
     public Restaurant( int resID, String name, int logo )
     {
@@ -20,15 +17,6 @@ public class Restaurant
         this.logo = logo;
     }
 
-    public void loadMenu(Context context)
-    {
-        //load FoodItems from database into menu
-    }
-
-    public List<FoodItem> getMenu()
-    {
-        return this.menu;
-    }
     public String getName()
     {
         return this.name;
