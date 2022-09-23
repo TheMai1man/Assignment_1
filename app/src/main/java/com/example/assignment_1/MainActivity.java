@@ -15,7 +15,6 @@ public class MainActivity extends AppCompatActivity
 {
     Button order, login;
     private CommonData mViewModel;
-    private SQLiteDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -76,6 +75,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+
         //User chooses a quantity for the selected FoodItem
         mViewModel.selectedFoodItem.observe(this, new Observer<FoodItem>()
         {
@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+
         //when qty confirmed we return to the menu
         mViewModel.qtyConfirmed.observe(this, new Observer<Integer>()
         {
@@ -107,33 +108,17 @@ public class MainActivity extends AppCompatActivity
                 }
                 fm.beginTransaction().add(R.id.frameLayout, menuFragment).commit();
 
-                //add item with quantity to the current order table
-                //check for existing item in table
-                if(mViewModel.getQtyConfirmed() > 0 )
-                {
-                    int ii = 0;
-                    int itemId = mViewModel.getSelectedFoodItem().getItemID();
-                    ContentValues cv = new ContentValues();
-                    cv.put(CurrentOrder.Cols.ITEM_ID, itemId);
-                    cv.put(CurrentOrder.Cols.QTY, mViewModel.getQtyConfirmed());
 
-                    String[] whereValue = { String.valueOf( itemId ) };
-                    ii = db.update( CurrentOrder.NAME, cv, CurrentOrder.Cols.ITEM_ID + " = ?", whereValue );
-
-                    if( ii == 0)
-                    {
-                        db.insert( CurrentOrder.NAME, null, cv );
-                    }
-                }
-                else
+                if(mViewModel.getQtyConfirmed() ==  0 )
                 {
                     //toast: "qty '0' invalid, bucket unchanged"
                 }
+
             }
         });
 
 
-        //checkout, view/edit order
+        //user is done adding to cart, now load checkoutFragment for finalisation of order
         mViewModel.checkout.observe(this, new Observer<Boolean>()
         {
             @Override
@@ -151,56 +136,57 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+
         //confirm checkout, login/register if no user logged in
         mViewModel.checkoutConfirm.observe(this, new Observer<Boolean>()
         {
             @Override
             public void onChanged(Boolean aBoolean)
             {
-                if(mViewModel.getCheckoutConfirm() )
+                if( mViewModel.getCheckoutConfirm() )
                 {
                     if( mViewModel.getLoggedInUser() == 0 )
                     {
                         getUserLoggedIn();
+                        mViewModel.loggedInUser.observe(this, new Observer<Integer>()
+                        {
+                            @Override
+                            public void onChanged(Integer integer)
+                            {
+                                //finalise order
+
+                                //return to specials/home page
+                                setUpHome();
+                            }
+                        });
                     }
                     else
                     {
-                        //reset but stay logged in
-                        SpecialsFragment specialsFragment = (SpecialsFragment) fm.findFragmentById(R.id.frameLayout);
-                        if(specialsFragment == null)
-                        {
-                            specialsFragment = new SpecialsFragment();
-                        }
-                        fm.beginTransaction().add(R.id.frameLayout, specialsFragment).commit();
-                        order.setVisibility(View.VISIBLE);
-                        login.setVisibility(View.VISIBLE);
-                        mViewModel.setCheckout(false);
-                        mViewModel.setCheckout(false);
-                        mViewModel.setOrderList(null);
+                        //finalise order
+
+                        //return to specials/home page
+                        setUpHome();
+
                     }
                 }
             }
         });
 
 
-        //login, register
+        //login button handler
         login.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View view)
             {
-                int userID = 0;
-                //login or register
-                //load login Activity for result
-
-                //set user ID in CommonData
-                if(userID != 0)
+                if( mViewModel.getLoggedInUser() == 0 )
                 {
-                    mViewModel.setLoggedInUser(userID);
+                    getUserLoggedIn();
                 }
-
-                //change button text to "order history"
-                login.setText("Order History");
+                else
+                {
+                    //order history of logged in user
+                }
             }
         });
 
@@ -219,4 +205,34 @@ public class MainActivity extends AppCompatActivity
         fm.beginTransaction().add(R.id.frameLayout, loginFragment).commit();
     }
 
+
+    //load specials fragment
+    public void setUpHome()
+    {
+        FragmentManager fm = getSupportFragmentManager();
+        SpecialsFragment specialsFragment = (SpecialsFragment) fm.findFragmentById(R.id.frameLayout);
+        if(specialsFragment == null)
+        {
+            specialsFragment = new SpecialsFragment();
+        }
+        fm.beginTransaction().add(R.id.frameLayout, specialsFragment).commit();
+
+        //show order and login buttons
+        order.setVisibility(View.VISIBLE);
+        login.setVisibility(View.VISIBLE);
+
+        //set login button text based on user log in status
+        if( mViewModel.getLoggedInUser() == 0 )
+        {
+            login.setText("Login");
+        }
+        else
+        {
+            login.setText("Order History");
+        }
+
+        mViewModel.setCheckout(false);
+        mViewModel.setCheckoutConfirm(false);
+        mViewModel.setOrderList(null);
+    }
 }

@@ -23,6 +23,10 @@ public class Order
     {
         return this.qty;
     }
+    public int getId()
+    {
+        return this.item.getItemID();
+    }
 
     public void setItem(FoodItem value)
     {

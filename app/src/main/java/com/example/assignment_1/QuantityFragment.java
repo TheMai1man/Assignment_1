@@ -74,13 +74,20 @@ public class QuantityFragment extends Fragment
             @Override
             public void onClick(View view)
             {
-                if(ii >= 0)
+                if(ii > 0)
                 {
-                    mViewModel.setQtyConfirmed(ii);
+                    mViewModel.getOrderList().add(mViewModel.getSelectedFoodItem(), ii);
+
+
+                }
+                else if( ii < 0 )
+                {
+                    //do nothing, pop toast to user
                 }
                 else
                 {
-                    //do nothing, pop toast to user
+                    mViewModel.setQtyConfirmed(ii);
+                    //pop toast to user in MainActivity
                 }
             }
         });

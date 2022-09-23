@@ -8,6 +8,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +27,8 @@ public class CheckoutFragment extends Fragment
     public CheckoutFragment() {}
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
 
     }
@@ -41,10 +44,7 @@ public class CheckoutFragment extends Fragment
 
         checkout = (Button) view.findViewById(R.id.checkoutButton);
 
-        if(data == null)
-        {
-            data = mViewModel.getOrderList();
-        }
+        data = mViewModel.getOrderList();
 
         MyAdapter adapter = new MyAdapter(data);
         rv.setAdapter(adapter);
@@ -98,8 +98,44 @@ public class CheckoutFragment extends Fragment
             vh.bind(item);
 
             //onClickListener for remove
-            //qty edit handling
+            vh.remove.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View view)
+                {
+                    mViewModel.getOrderList().remove(item);
+                }
+            });
 
+            //qty edit handling
+            vh.qtyEdit.addTextChangedListener(new TextWatcher()
+            {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+                @Override
+                public void afterTextChanged(Editable editable)
+                {
+                    String input = vh.qtyEdit.getText().toString();
+                    if( !input.equals("") )
+                    {
+                        int qty = Integer.parseInt(input);
+                        if(qty > 0)
+                        {
+                            mViewModel.getOrderList().edit(item, qty);
+                        }
+                        else
+                        {
+                            //toast to user, "serving quantity invalid"
+                        }
+                    }
+                    else
+                    {
+                        //toast to user, "serving quantity invalid"
+                    }
+                }
+            });
         }
     }
 
