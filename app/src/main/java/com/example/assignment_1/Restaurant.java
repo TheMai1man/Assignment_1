@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Restaurant
 {
-    private List<FoodItem> menu = new ArrayList<>();
+    private final List<FoodItem> menu = new ArrayList<>();
     private final int resID;
     private final String name;
     private final int logo;

@@ -45,9 +45,4 @@ public class MyCursor extends CursorWrapper
         return new User( email, pwd, id );
     }
 
-    public void setUser()
-    {
-
-    }
-
 }

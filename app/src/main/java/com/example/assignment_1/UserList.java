@@ -51,14 +51,6 @@ public class UserList
         userList.add( new User( value.getEmail(), value.getPwd(), value.getId() ) );
     }
 
-    public User get(int i) {
-        return userList.get(i);
-    }
-    public int size()
-    {
-        return userList.size();
-    }
-
     public int newUserID()
     {
         MyCursor cursor = new MyCursor( db.query( UserTable.NAME,

@@ -1,8 +1,9 @@
 package com.example.assignment_1;
 
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
-public class CommonData
+public class CommonData extends ViewModel
 {
     public MutableLiveData<Restaurant> selectedRestaurant;
     public MutableLiveData<User> loggedInUser;
@@ -12,6 +13,7 @@ public class CommonData
     public MutableLiveData<Boolean> checkoutConfirm;
     public MutableLiveData<OrderList> orderList;
     public MutableLiveData<UserList> userList;
+    public MutableLiveData<Boolean> loggedIn;
 
     public CommonData()
     {
@@ -38,11 +40,23 @@ public class CommonData
 
         userList = new MutableLiveData<UserList>();
         userList.setValue(null);
+
+        loggedIn = new MutableLiveData<Boolean>();
+        loggedIn.setValue(false);
+    }
+
+    public boolean getLoggedIn()
+    {
+        return this.loggedIn.getValue();
+    }
+    public void setLoggedIn(Boolean value)
+    {
+        this.loggedIn.setValue(value);
     }
 
     public Restaurant getSelectedRestaurant()
     {
-        return selectedRestaurant.getValue();
+        return this.selectedRestaurant.getValue();
     }
     public void setSelectedRestaurant(Restaurant value)
     {
@@ -51,11 +65,12 @@ public class CommonData
 
     public User getLoggedInUser()
     {
-        return loggedInUser.getValue();
+        return this.loggedInUser.getValue();
     }
     public void setLoggedInUser(User value)
     {
         this.loggedInUser.setValue(value);
+        setLoggedIn(true);
     }
 
     public void setSelectedFoodItem( FoodItem value )
@@ -64,7 +79,7 @@ public class CommonData
     }
     public FoodItem getSelectedFoodItem()
     {
-        return selectedFoodItem.getValue();
+        return this.selectedFoodItem.getValue();
     }
 
     public void setQtyConfirmed(int value)
@@ -111,4 +126,5 @@ public class CommonData
     {
         return this.userList.getValue();
     }
+
 }

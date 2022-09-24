@@ -2,8 +2,12 @@ package com.example.assignment_1;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -28,155 +32,19 @@ public class MainActivity extends AppCompatActivity
         login = findViewById(R.id.loginRegister);
 
         FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction transaction = fm.beginTransaction();
+        transaction.setReorderingAllowed(true);
 
         //Load specials home page fragment
-        setUpHome();
+        setUpHome(transaction);
 
-
-        //load restaurant selection fragment
+        //load MainFragment
         order.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View view)
             {
-                RestaurantFragment restaurantFragment = (RestaurantFragment) fm.findFragmentById(R.id.frameLayout);
-                if(restaurantFragment == null)
-                {
-                    restaurantFragment = new RestaurantFragment();
-                }
-                fm.beginTransaction().add(R.id.frameLayout, restaurantFragment).commit();
-
-                order.setVisibility(View.GONE);
-                login.setVisibility(View.GONE);
-            }
-        });
-
-
-        //load food selection fragment when selectedRestaurant set in CommonData
-        mViewModel.selectedRestaurant.observe(this, new Observer<Restaurant>()
-        {
-            @Override
-            public void onChanged(Restaurant restaurant)
-            {
-                MenuFragment menuFragment = (MenuFragment) fm.findFragmentById(R.id.frameLayout);
-                if(menuFragment == null)
-                {
-                    menuFragment = new MenuFragment();
-                }
-                fm.beginTransaction().add(R.id.frameLayout, menuFragment).commit();
-
-                order.setVisibility(View.GONE);
-                login.setVisibility(View.GONE);
-            }
-        });
-
-
-        //User chooses a quantity for the selected FoodItem
-        mViewModel.selectedFoodItem.observe(this, new Observer<FoodItem>()
-        {
-            @Override
-            public void onChanged(FoodItem foodItem)
-            {
-                if(mViewModel.getSelectedFoodItem() != null )
-                {
-                    QuantityFragment quantityFragment = (QuantityFragment) fm.findFragmentById(R.id.frameLayout);
-                    if(quantityFragment == null)
-                    {
-                        quantityFragment = new QuantityFragment();
-                    }
-                    fm.beginTransaction().add(R.id.frameLayout, quantityFragment).commit();
-
-                    order.setVisibility(View.GONE);
-                    login.setVisibility(View.GONE);
-                }
-            }
-        });
-
-
-        //when qty confirmed we return to the menu
-        mViewModel.qtyConfirmed.observe(this, new Observer<Integer>()
-        {
-            @Override
-            public void onChanged(Integer integer)
-            {
-                MenuFragment menuFragment = (MenuFragment) fm.findFragmentById(R.id.frameLayout);
-                if(menuFragment == null)
-                {
-                    menuFragment = new MenuFragment();
-                }
-                fm.beginTransaction().add(R.id.frameLayout, menuFragment).commit();
-
-                order.setVisibility(View.GONE);
-                login.setVisibility(View.GONE);
-
-                if(mViewModel.getQtyConfirmed() ==  0 )
-                {
-                    //toast: "qty '0' invalid, bucket unchanged"
-                    Toast.makeText(MainActivity.this, "Qty of 0 invalid, bucket unchanged.", Toast.LENGTH_LONG).show();
-                }
-
-            }
-        });
-
-
-        //user is done adding to cart, now load checkoutFragment for finalisation of order
-        mViewModel.checkout.observe(this, new Observer<Boolean>()
-        {
-            @Override
-            public void onChanged(Boolean aBoolean)
-            {
-                if( mViewModel.getCheckout() )
-                {
-                    CheckoutFragment checkoutFragment = (CheckoutFragment) fm.findFragmentById(R.id.frameLayout);
-                    if(checkoutFragment == null)
-                    {
-                        checkoutFragment = new CheckoutFragment();
-                    }
-                    fm.beginTransaction().add(R.id.frameLayout, checkoutFragment).commit();
-
-                    order.setVisibility(View.GONE);
-                    login.setVisibility(View.GONE);
-                }
-            }
-        });
-
-
-        //confirm checkout, login/register if no user logged in
-        mViewModel.checkoutConfirm.observe(this, new Observer<Boolean>()
-        {
-            @Override
-            public void onChanged(Boolean aBoolean)
-            {
-                if( mViewModel.getCheckoutConfirm() )
-                {
-                    if( mViewModel.getLoggedInUser() == null )
-                    {
-                        getUserLoggedIn();
-                        mViewModel.loggedInUser.observe(MainActivity.this, new Observer<User>()
-                        {
-                            @Override
-                            public void onChanged(User user)
-                            {
-                                //finalise order
-                                mViewModel.getOrderList().saveOrder(mViewModel.getLoggedInUser());
-                                //notify user of completed order with toast
-                                Toast.makeText(MainActivity.this, "Order complete!", Toast.LENGTH_LONG).show();
-                                //return to specials/home page
-                                setUpHome();
-                            }
-                        });
-                    }
-                    else
-                    {
-                        //finalise order
-                        mViewModel.getOrderList().saveOrder(mViewModel.getLoggedInUser());
-                        //notify user of completed order with toast
-                        Toast.makeText(MainActivity.this, "Order complete!", Toast.LENGTH_LONG).show();
-                        //return to specials/home page
-                        setUpHome();
-
-                    }
-                }
+                transaction.replace( R.id.frameLayout, MainFragment.class, null ).commit();
             }
         });
 
@@ -189,21 +57,21 @@ public class MainActivity extends AppCompatActivity
             {
                 if( mViewModel.getLoggedInUser() == null )
                 {
-                    getUserLoggedIn();
-                    mViewModel.loggedInUser.observe(this, new Observer<User>()
+                    getUserLoggedIn(transaction);
+                    mViewModel.loggedInUser.observe(MainActivity.this, new Observer<User>()
                     {
                         @Override
                         public void onChanged(User user)
                         {
-                            setUpHome();
+                            setUpHome(transaction);
                         }
                     });
-
-                    //order history function not yet added
                 }
-                /*
                 else
                 {
+                    //order history function not yet added
+                    Toast.makeText(MainActivity.this, "Order history unavailable.", Toast.LENGTH_LONG).show();
+                    /*
                     //hide order and login buttons
                     order.setVisibility(View.GONE);
                     login.setVisibility(View.GONE);
@@ -217,43 +85,29 @@ public class MainActivity extends AppCompatActivity
                     fm.beginTransaction().add(R.id.frameLayout, historyFragment).commit();
                 }
                 */
+                }
             }
         });
 
     }
 
 
+
     //loads the login fragment to get user to register or login
-    public void getUserLoggedIn()
+    public void getUserLoggedIn(FragmentTransaction transaction)
     {
-        FragmentManager fm = getSupportFragmentManager();
-        LoginFragment loginFragment = (LoginFragment) fm.findFragmentById(R.id.frameLayout);
-        if(loginFragment == null)
-        {
-            loginFragment = new LoginFragment();
-        }
-        fm.beginTransaction().add(R.id.frameLayout, loginFragment).commit();
+        transaction.replace( R.id.frameLayout, LoginFragment.class, null ).commit();
 
         order.setVisibility(View.GONE);
         login.setVisibility(View.GONE);
+
+
     }
 
 
     //load specials fragment
-    public void setUpHome()
+    public void setUpHome(FragmentTransaction transaction)
     {
-        FragmentManager fm = getSupportFragmentManager();
-        SpecialsFragment specialsFragment = (SpecialsFragment) fm.findFragmentById(R.id.frameLayout);
-        if(specialsFragment == null)
-        {
-            specialsFragment = new SpecialsFragment();
-        }
-        fm.beginTransaction().add(R.id.frameLayout, specialsFragment).commit();
-
-        //show order and login buttons
-        order.setVisibility(View.VISIBLE);
-        login.setVisibility(View.VISIBLE);
-
         //set login button text based on user log in status
         if( mViewModel.getLoggedInUser() == null )
         {
@@ -264,8 +118,19 @@ public class MainActivity extends AppCompatActivity
             login.setText("Order History");
         }
 
+        transaction.replace( R.id.frameLayout, SpecialsFragment.class, null ).commit();
+
+        order.setVisibility(View.VISIBLE);
+        login.setVisibility(View.VISIBLE);
+
         mViewModel.setCheckout(false);
         mViewModel.setCheckoutConfirm(false);
         mViewModel.setOrderList(null);
+    }
+
+    public static Intent getIntent(Context c)
+    {
+        Intent intent = new Intent(c, MainActivity.class);
+        return intent;
     }
 }

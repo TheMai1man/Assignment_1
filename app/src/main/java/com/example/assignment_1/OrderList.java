@@ -30,7 +30,7 @@ public class OrderList {
 
     public void add(FoodItem item, int qty)
     {
-        int ii = 0;
+        int ii;
         MyCursor cursor = new MyCursor( db.query( CurrentOrder.NAME,
                 null,
                 CurrentOrder.Cols.ITEM_ID + " = " + item.getItemID(),
@@ -98,7 +98,7 @@ public class OrderList {
     {
         int ii = 0;
         boolean found = false;
-        Order o = orderList.get(0);
+        Order o;
 
         do
         {

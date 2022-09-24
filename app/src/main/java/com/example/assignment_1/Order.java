@@ -27,11 +27,6 @@ public class Order
     {
         return this.item.getItemID();
     }
-
-    public void setItem(FoodItem value)
-    {
-        this.item = value;
-    }
     public void setQty(int i)
     {
         this.qty = i;
