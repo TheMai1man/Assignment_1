@@ -128,7 +128,8 @@ public class OrderDbHelper extends SQLiteOpenHelper
                 new FoodItem( 11, 62, "food62", "food62 description", 199.99, R.drawable.food62 ),
                 new FoodItem( 11, 63, "food63", "food63 description", 19.99, R.drawable.food63 ),
                 new FoodItem( 11, 64, "food64", "food64 description", 19.99, R.drawable.food64 ),
-                new FoodItem( 11, 65, "food65", "food65 description", 9.99, R.drawable.food65 )
+                new FoodItem( 11, 65, "food65", "food65 description", 9.99, R.drawable.food65 ),
+                new FoodItem(11, 66, "food66", "food66 description", 3.99, R.drawable.food66)
         };
 
 
