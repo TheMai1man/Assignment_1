@@ -1,12 +1,15 @@
 package com.example.assignment_1;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
@@ -19,25 +22,32 @@ public class MenuFragment extends Fragment
     private CommonData mViewModel;
     private Restaurant data;
 
-    public MenuFragment() {}
-
     private Button checkout;
+
+    public MenuFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup ui, Bundle bundle)
     {
-        View view = inflater.inflate(R.layout.fragment_menu, ui, false);
+        return inflater.inflate(R.layout.fragment_menu, ui, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState)
+    {
+        super.onViewCreated(view, savedInstanceState);
+        mViewModel = new ViewModelProvider(requireActivity()).get(CommonData.class);
 
         RecyclerView rv = (RecyclerView) view.findViewById(R.id.menuRecyclerView);
-        rv.setLayoutManager(new LinearLayoutManager( getActivity(),
+        rv.setLayoutManager(new LinearLayoutManager( requireActivity(),
                 LinearLayoutManager.VERTICAL, false ));
-
-        checkout = (Button) view.findViewById(R.id.checkoutButton);
 
         if(data == null)
         {
             data = mViewModel.getSelectedRestaurant();
         }
+
+        checkout = (Button) view.findViewById(R.id.checkoutButton);
 
         MyAdapter adapter = new MyAdapter(data);
         rv.setAdapter(adapter);
@@ -47,18 +57,17 @@ public class MenuFragment extends Fragment
             @Override
             public void onClick(View view)
             {
-                mViewModel.setCheckout(true);
+                if( mViewModel.getOrderList() != null )
+                {
+                    mViewModel.setCheckout(true);
+                }
+                else
+                {
+                    Toast.makeText(requireActivity(), "Your bucket is empty!", Toast.LENGTH_LONG).show();
+                }
             }
         });
 
-        return view;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState)
-    {
-        super.onViewCreated(view, savedInstanceState);
-        mViewModel = new ViewModelProvider(requireActivity()).get(CommonData.class);
     }
 
     private class MyAdapter extends RecyclerView.Adapter<MyDataVHolder>
@@ -80,7 +89,7 @@ public class MenuFragment extends Fragment
         @Override
         public MyDataVHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
         {
-            LayoutInflater li = LayoutInflater.from(getActivity());
+            LayoutInflater li = LayoutInflater.from(requireActivity());
             return new MyDataVHolder(li, parent);
         }
 
@@ -95,8 +104,9 @@ public class MenuFragment extends Fragment
                 @Override
                 public void onClick(View view)
                 {
-                    //pop up quantity selection and add to order
+                    //set selected FoodItem
                     mViewModel.setSelectedFoodItem(fi);
+                    //pop up quantity selection and add to order
                 }
             });
         }

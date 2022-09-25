@@ -2,15 +2,6 @@ package com.example.assignment_1;
 
 public class OrderSchema
 {
-    public static class CurrentOrder
-    {
-        public static final String NAME = "current_order";
-        public static class Cols
-        {
-            public static final String ITEM_ID = "item_id";
-            public static final String QTY = "qty";
-        }
-    }
 
     public static class OrderTable
     {

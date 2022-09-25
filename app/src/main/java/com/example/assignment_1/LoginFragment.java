@@ -1,11 +1,11 @@
 package com.example.assignment_1;
 
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +16,7 @@ import android.widget.Toast;
 public class LoginFragment extends Fragment
 {
     private CommonData mViewModel;
-    private SQLiteDatabase db;
+    private UserList data;
 
     private EditText address, pwd;
     private Button login, register;
@@ -24,16 +24,30 @@ public class LoginFragment extends Fragment
     public LoginFragment() {}
 
     @Override
+    public void onCreate(Bundle b)
+    {
+        super.onCreate(b);
+        data = new UserList();
+        data.load(requireActivity());
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup ui, Bundle savedInstanceState)
     {
-        View view = inflater.inflate(R.layout.fragment_login, ui, false);
+        return inflater.inflate(R.layout.fragment_login, ui, false);
+    }
+
+
+    @Override
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState)
+    {
+        super.onViewCreated(view, savedInstanceState);
+        mViewModel = new ViewModelProvider(requireActivity()).get(CommonData.class);
 
         address = (EditText) view.findViewById(R.id.usernameEdit);
         pwd = (EditText) view.findViewById(R.id.pwdEdit);
         login = (Button) view.findViewById(R.id.loginButton);
         register = (Button) view.findViewById(R.id.registerButton);
-
-        this.db = new OrderDbHelper(getContext()).getWritableDatabase();
 
         login.setOnClickListener(new View.OnClickListener()
         {
@@ -43,7 +57,7 @@ public class LoginFragment extends Fragment
                 //validate email
                 if( emailValid() && emailExists() )
                 {
-                    User user = mViewModel.getUserList().find(address.getText().toString());
+                    User user = data.find(address.getText().toString());
                     //validate pwd
                     if( pwdValid() && pwd.getText().toString().equals(user.getPwd()) )
                     {
@@ -77,9 +91,9 @@ public class LoginFragment extends Fragment
                         if( !emailExists() )
                         {
                             //create user
-                            int i = mViewModel.getUserList().newUserID();
+                            int i = data.newUserID();
                             User user = new User( address.getText().toString(), pwd.getText().toString(), i );
-                            mViewModel.getUserList().add(user);
+                            data.add(user);
                             //setUser
                             mViewModel.setLoggedInUser(user);
                         }
@@ -100,8 +114,6 @@ public class LoginFragment extends Fragment
             }
         });
 
-
-        return view;
     }
 
     public boolean pwdValid()
@@ -124,6 +136,7 @@ public class LoginFragment extends Fragment
     {
         boolean valid = false;
         String email;
+
         if( !address.getText().toString().equals("") )
         {
             email = address.getText().toString();
@@ -139,7 +152,7 @@ public class LoginFragment extends Fragment
     public boolean emailExists()
     {
         boolean exists = false;
-        if( mViewModel.getUserList().find( address.getText().toString() ) != null )
+        if( data.size() > 0 && data.find( address.getText().toString() ) != null )
         {
             exists = true;
         }
@@ -147,10 +160,4 @@ public class LoginFragment extends Fragment
         return exists;
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState)
-    {
-        super.onViewCreated(view, savedInstanceState);
-        mViewModel = new ViewModelProvider(requireActivity()).get(CommonData.class);
-    }
 }

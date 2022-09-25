@@ -48,10 +48,6 @@ public class OrderDbHelper extends SQLiteOpenHelper
                 OrderTable.Cols.QTY + " INTEGER, " +
                 OrderTable.Cols.ORDER_ID + " INTEGER)" );
 
-        db.execSQL( "CREATE TABLE " + CurrentOrder.NAME + "(" +
-                CurrentOrder.Cols.ITEM_ID + " INTEGER, " +
-                CurrentOrder.Cols.QTY + " INTEGER)" );
-
         //Here we hard code adding restaurants and their menu items to the database
         Restaurant restautantArray[] = new Restaurant[] {
                 new Restaurant( 1, "place1", R.drawable.logo1 ),
@@ -60,11 +56,11 @@ public class OrderDbHelper extends SQLiteOpenHelper
                 new Restaurant( 4, "place4", R.drawable.logo4 ),
                 new Restaurant( 5, "place5", R.drawable.logo5 ),
                 new Restaurant( 6, "place6", R.drawable.logo6 ),
-                new Restaurant( 7, "place1", R.drawable.logo7 ),
-                new Restaurant( 8, "place1", R.drawable.logo8 ),
-                new Restaurant( 9, "place1", R.drawable.logo9 ),
-                new Restaurant( 10, "place1", R.drawable.logo10 ),
-                new Restaurant( 11, "place1", R.drawable.logo11 )
+                new Restaurant( 7, "place7", R.drawable.logo7 ),
+                new Restaurant( 8, "place8", R.drawable.logo8 ),
+                new Restaurant( 9, "place9", R.drawable.logo9 ),
+                new Restaurant( 10, "place10", R.drawable.logo10 ),
+                new Restaurant( 11, "place11", R.drawable.logo11 )
         };
 
         FoodItem itemArray[] = new FoodItem[] {
@@ -165,6 +161,7 @@ public class OrderDbHelper extends SQLiteOpenHelper
 
             db.insert( FoodItemTable.NAME, null, cv );
         }
+
     }
 
     @Override

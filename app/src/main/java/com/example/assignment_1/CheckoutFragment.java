@@ -21,6 +21,7 @@ import android.widget.Toast;
 public class CheckoutFragment extends Fragment
 {
     private Button checkout;
+    private TextView grandTotal;
 
     private CommonData mViewModel;
     private OrderList data;
@@ -28,38 +29,9 @@ public class CheckoutFragment extends Fragment
     public CheckoutFragment() {}
 
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup ui, Bundle savedInstanceState)
     {
-        View view = inflater.inflate(R.layout.fragment_checkout, ui, false);
-
-        RecyclerView rv = (RecyclerView) view.findViewById(R.id.menuRecyclerView);
-        rv.setLayoutManager(new LinearLayoutManager( getActivity(),
-                LinearLayoutManager.VERTICAL, false ));
-
-        checkout = (Button) view.findViewById(R.id.checkoutButton);
-
-        data = mViewModel.getOrderList();
-
-        MyAdapter adapter = new MyAdapter(data);
-        rv.setAdapter(adapter);
-
-        checkout.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-                mViewModel.setCheckoutConfirm(true);
-            }
-        });
-
-        return view;
+        return inflater.inflate(R.layout.fragment_checkout, ui, false);
     }
 
     @Override
@@ -67,6 +39,30 @@ public class CheckoutFragment extends Fragment
     {
         super.onViewCreated(view, savedInstanceState);
         mViewModel = new ViewModelProvider(requireActivity()).get(CommonData.class);
+
+        RecyclerView rv = (RecyclerView) view.findViewById(R.id.menuRecyclerView);
+        rv.setLayoutManager(new LinearLayoutManager( getActivity(),
+                LinearLayoutManager.VERTICAL, false ));
+
+        checkout = (Button) view.findViewById(R.id.checkoutConfirmButton);
+
+        data = mViewModel.getOrderList();
+
+        MyAdapter adapter = new MyAdapter(data);
+        rv.setAdapter(adapter);
+
+        grandTotal = (TextView) view.findViewById(R.id.grandTotal);
+        grandTotal.setText( calcGrandTotal() );
+
+        checkout.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                mViewModel.setOrderList(data);
+                mViewModel.setCheckoutConfirm(true);
+            }
+        });
     }
 
     private class MyAdapter extends RecyclerView.Adapter<MyDataVHolder>
@@ -96,6 +92,7 @@ public class CheckoutFragment extends Fragment
         public void onBindViewHolder(MyDataVHolder vh, int index)
         {
             Order item = data.get(index);
+            int ii = index;
             vh.bind(item);
 
             //onClickListener for remove
@@ -104,7 +101,10 @@ public class CheckoutFragment extends Fragment
                 @Override
                 public void onClick(View view)
                 {
-                    mViewModel.getOrderList().remove(item);
+                    data.remove(item);
+                    notifyItemRemoved(ii);
+                    notifyItemRangeChanged(ii, data.size());
+                    grandTotal.setText( calcGrandTotal() );
                 }
             });
 
@@ -124,7 +124,11 @@ public class CheckoutFragment extends Fragment
                         int qty = Integer.parseInt(input);
                         if(qty > 0)
                         {
-                            mViewModel.getOrderList().edit(item, qty);
+                            mViewModel.getOrderList().editQty(item, qty);
+                            //change total text to reflect new quantity
+                            String total = String.format("%.2f", item.getPrice() * qty);
+                            vh.totalPrice.setText( total );
+                            grandTotal.setText( calcGrandTotal() );
                         }
                         else
                         {
@@ -166,8 +170,20 @@ public class CheckoutFragment extends Fragment
             name.setText(data.getName());
             servePrice.setText( String.format("%.2f", price ) );
             totalPrice.setText( String.format("%.2f", total ) );
-            qtyEdit.setText(qty);
+            qtyEdit.setText(String.valueOf(qty));
         }
+    }
+
+    public String calcGrandTotal()
+    {
+        double result = 0;
+
+        for(int ii = 0; ii < data.size(); ii++)
+        {
+            result += data.get(ii).getPrice() * (double)data.get(ii).getQty();
+        }
+
+        return String.format("%.2f", result);
     }
 
 }

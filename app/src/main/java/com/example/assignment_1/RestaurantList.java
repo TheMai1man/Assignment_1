@@ -18,6 +18,7 @@ public class RestaurantList
     {
         this.db = new OrderDbHelper( context.getApplicationContext() ).getWritableDatabase();
 
+        //get Restaurant data from database
         MyCursor cursorR = new MyCursor( db.query( RestaurantTable.NAME,
                             null,
                             null,
@@ -67,6 +68,23 @@ public class RestaurantList
     public Restaurant get(int i)
     {
         return restaurantList.get(i);
+    }
+
+    public Restaurant getRestaurantById(int id)
+    {
+        boolean found = false;
+        int ii = 0;
+
+        do
+        {
+            if(restaurantList.get(ii).getResID() == id)
+            {
+                found = true;
+            }
+            ii++;
+        }while(!found && ii < restaurantList.size());
+
+        return restaurantList.get(ii);
     }
 
     public int size()

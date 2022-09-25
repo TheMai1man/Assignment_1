@@ -26,13 +26,20 @@ public class RestaurantFragment extends Fragment
     {
         super.onCreate(b);
         data = new RestaurantList();
-        data.load(getActivity());
+        data.load(requireActivity());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup ui, Bundle bundle)
     {
-        View view = inflater.inflate(R.layout.fragment_selector, ui, false);
+        return inflater.inflate(R.layout.fragment_selector, ui, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState)
+    {
+        super.onViewCreated(view, savedInstanceState);
+        mViewModel = new ViewModelProvider(requireActivity()).get(CommonData.class);
 
         RecyclerView rv = (RecyclerView) view.findViewById(R.id.selectorRecyclerView);
         rv.setLayoutManager(new LinearLayoutManager( getActivity(),
@@ -45,17 +52,6 @@ public class RestaurantFragment extends Fragment
 
         MyAdapter adapter = new MyAdapter(data);
         rv.setAdapter(adapter);
-
-        return view;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState)
-    {
-        super.onViewCreated(view, savedInstanceState);
-        mViewModel = new ViewModelProvider(requireActivity()).get(CommonData.class);
-
-        //handle user interaction here if outside of recycler view
     }
 
     private class MyAdapter extends RecyclerView.Adapter<MyDataVHolder>
@@ -77,7 +73,7 @@ public class RestaurantFragment extends Fragment
         @Override
         public MyDataVHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
         {
-            LayoutInflater li = LayoutInflater.from(getActivity());
+            LayoutInflater li = LayoutInflater.from(requireActivity());
             return new MyDataVHolder(li, parent);
         }
 
@@ -95,8 +91,6 @@ public class RestaurantFragment extends Fragment
                     mViewModel.setSelectedRestaurant(r);
                 }
             });
-            //here we can set anything specific to the viewHolder that may change during runtime
-            //eg. with an onClickListener
         }
     }
 

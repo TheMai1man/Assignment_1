@@ -6,13 +6,13 @@ import androidx.lifecycle.ViewModel;
 public class CommonData extends ViewModel
 {
     public MutableLiveData<Restaurant> selectedRestaurant;
-    public MutableLiveData<User> loggedInUser;
     public MutableLiveData<FoodItem> selectedFoodItem;
     public MutableLiveData<Integer> qtyConfirmed;
     public MutableLiveData<Boolean> checkout;
     public MutableLiveData<Boolean> checkoutConfirm;
     public MutableLiveData<OrderList> orderList;
     public MutableLiveData<UserList> userList;
+    public MutableLiveData<User> loggedInUser;
     public MutableLiveData<Boolean> loggedIn;
 
     public CommonData()
@@ -20,14 +20,11 @@ public class CommonData extends ViewModel
         selectedRestaurant = new MutableLiveData<Restaurant>();
         selectedRestaurant.setValue(null);
 
-        loggedInUser = new MutableLiveData<User>();
-        loggedInUser.setValue(null);
-
         selectedFoodItem = new MutableLiveData<FoodItem>();
         selectedFoodItem.setValue(null);
 
         qtyConfirmed = new MutableLiveData<Integer>();
-        qtyConfirmed.setValue(1);
+        qtyConfirmed.setValue(-1);
 
         checkout = new MutableLiveData<Boolean>();
         checkout.setValue(false);
@@ -41,39 +38,23 @@ public class CommonData extends ViewModel
         userList = new MutableLiveData<UserList>();
         userList.setValue(null);
 
+        loggedInUser = new MutableLiveData<User>();
+        loggedInUser.setValue(null);
+
         loggedIn = new MutableLiveData<Boolean>();
         loggedIn.setValue(false);
     }
 
-    public boolean getLoggedIn()
-    {
-        return this.loggedIn.getValue();
-    }
-    public void setLoggedIn(Boolean value)
-    {
-        this.loggedIn.setValue(value);
-    }
-
-    public Restaurant getSelectedRestaurant()
-    {
-        return this.selectedRestaurant.getValue();
-    }
     public void setSelectedRestaurant(Restaurant value)
     {
         this.selectedRestaurant.setValue(value);
     }
-
-    public User getLoggedInUser()
+    public Restaurant getSelectedRestaurant()
     {
-        return this.loggedInUser.getValue();
-    }
-    public void setLoggedInUser(User value)
-    {
-        this.loggedInUser.setValue(value);
-        setLoggedIn(true);
+        return this.selectedRestaurant.getValue();
     }
 
-    public void setSelectedFoodItem( FoodItem value )
+    public void setSelectedFoodItem(FoodItem value)
     {
         this.selectedFoodItem.setValue(value);
     }
@@ -118,13 +99,13 @@ public class CommonData extends ViewModel
         return this.orderList.getValue();
     }
 
-    public void setUserList( UserList value )
+    public User getLoggedInUser()
     {
-        this.userList.setValue(value);
+        return this.loggedInUser.getValue();
     }
-    public UserList getUserList()
+    public void setLoggedInUser(User value)
     {
-        return this.userList.getValue();
+        this.loggedInUser.setValue(value);
     }
 
 }

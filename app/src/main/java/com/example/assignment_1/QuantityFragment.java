@@ -2,8 +2,10 @@ package com.example.assignment_1;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,13 +17,13 @@ import android.widget.Toast;
 
 public class QuantityFragment extends Fragment
 {
-    Button decrease, increase, confirm;
-    EditText qty;
-    TextView name, description;
-    ImageView photo;
+    private Button decrease, increase, confirm;
+    private EditText qty;
+    private TextView name, description;
+    private ImageView photo;
 
-    CommonData mViewModel;
-    FoodItem data;
+    private CommonData mViewModel;
+    private FoodItem data;
     int ii;
 
     public QuantityFragment() {}
@@ -29,7 +31,14 @@ public class QuantityFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup ui, Bundle bundle)
     {
-        View view = inflater.inflate(R.layout.fragment_quantity, ui, false);
+        return inflater.inflate(R.layout.fragment_quantity, ui, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState)
+    {
+        super.onViewCreated(view, savedInstanceState);
+        mViewModel = new ViewModelProvider(requireActivity()).get(CommonData.class);
 
         decrease = (Button) view.findViewById(R.id.decreaseQty);
         increase = (Button) view.findViewById(R.id.increaseQty);
@@ -38,6 +47,11 @@ public class QuantityFragment extends Fragment
         description = (TextView) view.findViewById(R.id.description);
         photo = (ImageView) view.findViewById(R.id.imageView);
         confirm = (Button) view.findViewById(R.id.confirm);
+
+        if(mViewModel.getOrderList() == null)
+        {
+            mViewModel.setOrderList(new OrderList());
+        }
 
         data = mViewModel.getSelectedFoodItem();
 
@@ -53,7 +67,7 @@ public class QuantityFragment extends Fragment
             public void onClick(View view)
             {
                 ii++;
-                qty.setText(ii);
+                qty.setText(String.valueOf(ii));
             }
         });
 
@@ -65,7 +79,7 @@ public class QuantityFragment extends Fragment
                 if(ii > 0)
                 {
                     ii--;
-                    qty.setText(ii);
+                    qty.setText(String.valueOf(ii));
                 }
             }
         });
@@ -77,9 +91,9 @@ public class QuantityFragment extends Fragment
             {
                 if(ii > 0)
                 {
-                    mViewModel.getOrderList().add(mViewModel.getSelectedFoodItem(), ii);
+                    mViewModel.getOrderList().add( new Order(data, ii) );
 
-
+                    mViewModel.setQtyConfirmed(ii);
                 }
                 else if( ii < 0 )
                 {
@@ -94,14 +108,6 @@ public class QuantityFragment extends Fragment
             }
         });
 
-        return view;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState)
-    {
-        super.onViewCreated(view, savedInstanceState);
-        mViewModel = new ViewModelProvider(requireActivity()).get(CommonData.class);
     }
 
 }

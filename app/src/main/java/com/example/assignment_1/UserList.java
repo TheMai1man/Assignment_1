@@ -14,6 +14,11 @@ public class UserList
 
     public UserList() {}
 
+    public int size()
+    {
+        return userList.size();
+    }
+
     public void load(Context context)
     {
         this.db = new OrderDbHelper(context.getApplicationContext()).getWritableDatabase();
@@ -67,25 +72,29 @@ public class UserList
     {
         int ii = 0;
         boolean found = false;
-        User user;
+        User user = null;
 
-        do
+        if(userList.size() > 0)
         {
-            user = userList.get(ii);
-
-            if( user.getEmail().equals(email) )
+            do
             {
-                found = true;
+                user = userList.get(ii);
+
+                if( user.getEmail().equals(email) )
+                {
+                    found = true;
+                }
+
+                ii++;
+
+            }while( ii < userList.size() && !found );
+
+            if(!found)
+            {
+                user = null;
             }
-
-            ii++;
-
-        }while( ii < userList.size() && !found );
-
-        if(!found)
-        {
-            user = null;
         }
+
 
         return user;
     }
