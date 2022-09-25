@@ -32,11 +32,6 @@ public class MyCursor extends CursorWrapper
         return new Restaurant(resID, name, logo);
     }
 
-    public int getOrderID()
-    {
-        return getInt( getColumnIndex( OrderHistoryTable.Cols.ORDER_ID ) );
-    }
-
     public User getUser()
     {
         int id = getInt( getColumnIndex( UserTable.Cols.USER_ID ) );
