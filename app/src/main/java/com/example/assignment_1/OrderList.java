@@ -1,11 +1,7 @@
 package com.example.assignment_1;
 
-import android.content.ContentValues;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-import com.example.assignment_1.OrderSchema.*;
 
 public class OrderList
 {

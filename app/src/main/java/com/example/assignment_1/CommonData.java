@@ -8,7 +8,6 @@ public class CommonData extends ViewModel
     public MutableLiveData<Restaurant> selectedRestaurant;
     public MutableLiveData<FoodItem> selectedFoodItem;
     public MutableLiveData<Integer> qtyConfirmed;
-    public MutableLiveData<Boolean> checkout;
     public MutableLiveData<Boolean> checkoutConfirm;
     public MutableLiveData<OrderList> orderList;
     public MutableLiveData<UserList> userList;
@@ -25,9 +24,6 @@ public class CommonData extends ViewModel
 
         qtyConfirmed = new MutableLiveData<Integer>();
         qtyConfirmed.setValue(-1);
-
-        checkout = new MutableLiveData<Boolean>();
-        checkout.setValue(false);
 
         checkoutConfirm = new MutableLiveData<Boolean>();
         checkoutConfirm.setValue(false);
@@ -70,15 +66,6 @@ public class CommonData extends ViewModel
     public int getQtyConfirmed()
     {
         return this.qtyConfirmed.getValue();
-    }
-
-    public void setCheckout(Boolean value)
-    {
-        this.checkout.setValue(value);
-    }
-    public boolean getCheckout()
-    {
-        return this.checkout.getValue();
     }
 
     public void setCheckoutConfirm(Boolean value)

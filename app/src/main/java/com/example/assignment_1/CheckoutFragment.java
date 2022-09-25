@@ -1,13 +1,11 @@
 package com.example.assignment_1;
 
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -60,7 +58,15 @@ public class CheckoutFragment extends Fragment
             public void onClick(View view)
             {
                 mViewModel.setOrderList(data);
-                mViewModel.setCheckoutConfirm(true);
+
+                if(mViewModel.getLoggedInUser() == null)
+                {
+                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, LoginFragment.class, null).commit();
+                }
+                else
+                {
+                    mViewModel.setCheckoutConfirm(true);
+                }
             }
         });
     }

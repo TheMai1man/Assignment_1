@@ -94,6 +94,8 @@ public class QuantityFragment extends Fragment
                     mViewModel.getOrderList().add( new Order(data, ii) );
 
                     mViewModel.setQtyConfirmed(ii);
+
+                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, MenuFragment.class, null).commit();
                 }
                 else if( ii < 0 )
                 {

@@ -5,11 +5,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import android.content.ContentValues;
-import android.content.Context;
-import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -49,16 +46,7 @@ public class MainActivity extends AppCompatActivity
             {
                 if( mViewModel.getLoggedInUser() == null )
                 {
-                    fm.beginTransaction().replace(R.id.frameLayout, LoginFragment.class, null).commit();
-
-                    mViewModel.loggedInUser.observe(MainActivity.this, new Observer<User>()
-                    {
-                        @Override
-                        public void onChanged(User user)
-                        {
-                            setUpHome(fm);
-                        }
-                    });
+                    logIn(fm);
                 }
                 else
                 {
@@ -86,102 +74,6 @@ public class MainActivity extends AppCompatActivity
         });
 
 
-        //load food selection fragment when selectedRestaurant set in CommonData
-        mViewModel.selectedRestaurant.observe(MainActivity.this, new Observer<Restaurant>()
-        {
-            @Override
-            public void onChanged(Restaurant restaurant)
-            {
-                if(restaurant != null)
-                {
-                    //test that restaurant is set in CommonData
-                    Restaurant r = mViewModel.getSelectedRestaurant();
-                    //open MenuFragment in framelayout
-                    fm.beginTransaction().replace( R.id.frameLayout, MenuFragment.class, null ).commit();
-                }
-            }
-        });
-
-
-        //User chooses a quantity for the selected FoodItem
-        mViewModel.selectedFoodItem.observe(MainActivity.this, new Observer<FoodItem>()
-        {
-            @Override
-            public void onChanged(FoodItem foodItem)
-            {
-                if(foodItem != null)
-                {
-                    fm.beginTransaction().replace( R.id.frameLayout, QuantityFragment.class, null ).commit();
-                }
-
-            }
-        });
-
-
-        //when qty confirmed we return to the menu
-        mViewModel.qtyConfirmed.observe(MainActivity.this, new Observer<Integer>()
-        {
-            @Override
-            public void onChanged(Integer integer)
-            {
-                if(mViewModel.getQtyConfirmed() > 0)
-                {
-                    fm.beginTransaction().replace( R.id.frameLayout, MenuFragment.class, null ).commit();
-
-                    if(mViewModel.getQtyConfirmed() ==  0 )
-                    {
-                        //toast: "qty '0' invalid, bucket unchanged"
-                        Toast.makeText(MainActivity.this, "Bucket unchanged.", Toast.LENGTH_LONG).show();
-                    }
-                    if(mViewModel.getQtyConfirmed() >  0 )
-                    {
-                        //toast: "qty '0' invalid, bucket unchanged"
-                        Toast.makeText(MainActivity.this, "Added to bucket.", Toast.LENGTH_LONG).show();
-                    }
-                }
-            }
-        });
-
-
-        //user is done adding to cart, now load checkoutFragment for finalisation of order
-        mViewModel.checkout.observe(MainActivity.this, new Observer<Boolean>()
-        {
-            @Override
-            public void onChanged(Boolean aBoolean)
-            {
-                if( mViewModel.getCheckout() )
-                {
-                    if(mViewModel.getOrderList().size() > 0)
-                    {
-                        fm.beginTransaction().replace( R.id.frameLayout, CheckoutFragment.class, null ).commit();
-                    }
-                    else
-                    {
-                        Toast.makeText(MainActivity.this, "Bucket is empty!", Toast.LENGTH_LONG).show();
-                    }
-                }
-            }
-        });
-
-
-
-        mViewModel.loggedInUser.observe(MainActivity.this, new Observer<User>()
-        {
-            @Override
-            public void onChanged(User user)
-            {
-                if(mViewModel.getSelectedRestaurant() != null)
-                {
-                    //finalise order
-                    saveOrder(mViewModel.getLoggedInUser());
-                    //notify user of completed order with toast
-                    Toast.makeText(MainActivity.this, "Order complete!", Toast.LENGTH_LONG).show();
-                    //return to MainActivity for home page
-                    setUpHome(fm);
-                }
-            }
-        });
-
         //confirm checkout, login/register if no user logged in
         mViewModel.checkoutConfirm.observe(MainActivity.this, new Observer<Boolean>()
         {
@@ -190,21 +82,7 @@ public class MainActivity extends AppCompatActivity
             {
                 if( mViewModel.getCheckoutConfirm() )
                 {
-                    if( mViewModel.getLoggedInUser() == null )
-                    {
-                        fm.beginTransaction().replace( R.id.frameLayout, LoginFragment.class, null ).commit();
-                        order.setVisibility(View.GONE);
-                        login.setVisibility(View.GONE);
-                    }
-                    else
-                    {
-                        //finalise order
-                        saveOrder(mViewModel.getLoggedInUser());
-                        //notify user of completed order with toast
-                        Toast.makeText(MainActivity.this, "Order complete!", Toast.LENGTH_LONG).show();
-                        //return to MainActivity for home page
-                        setUpHome(fm);
-                    }
+                    completeOrder(fm);
                 }
             }
         });
@@ -212,16 +90,21 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-/*
-    //loads the login fragment to get user to register or login
-    public void getUserLoggedIn(FragmentManager fm)
+    public void completeOrder(FragmentManager fm)
     {
-        fm.beginTransaction().replace( R.id.frameLayout, LoginFragment.class, null ).commit();
-        order.setVisibility(View.GONE);
-        login.setVisibility(View.GONE);
+        saveOrder();
+        //return to MainActivity for home page
+        setUpHome(fm);
+        //notify user of completed order with toast
+        Toast.makeText(MainActivity.this, "Order complete!", Toast.LENGTH_LONG).show();
     }
 
- */
+    public void logIn(FragmentManager fm)
+    {
+        order.setVisibility(View.GONE);
+        login.setVisibility(View.GONE);
+        fm.beginTransaction().replace( R.id.frameLayout, LoginFragment.class, null ).commit();
+    }
 
 
     //load specials fragment
@@ -242,20 +125,14 @@ public class MainActivity extends AppCompatActivity
         order.setVisibility(View.VISIBLE);
         login.setVisibility(View.VISIBLE);
 
-        mViewModel.setCheckout(false);
         mViewModel.setCheckoutConfirm(false);
-        mViewModel.setOrderList(null);
     }
 
-    public static Intent getIntent(Context c)
-    {
-        Intent intent = new Intent(c, MainActivity.class);
-        return intent;
-    }
 
-    public void saveOrder(User user)
+    public void saveOrder()
     {
-        OrderList orderList = mViewModel.getOrderList();
+        OrderList list = mViewModel.getOrderList();
+        User user = mViewModel.getLoggedInUser();
 
         int ii = 0;
         int orderNum = newOrderNum();
@@ -263,12 +140,12 @@ public class MainActivity extends AppCompatActivity
 
         ContentValues cv = new ContentValues();
 
-        while( ii < orderList.size() )
+        while( ii < list.size() )
         {
-            totalPrice += orderList.get(ii).getPrice();
+            totalPrice += list.get(ii).getPrice();
             cv.put( OrderTable.Cols.ORDER_ID, orderNum );
-            cv.put( OrderTable.Cols.QTY, orderList.get(ii).getQty() );
-            cv.put( OrderTable.Cols.ITEM_ID, orderList.get(ii).getId() );
+            cv.put( OrderTable.Cols.QTY, list.get(ii).getQty() );
+            cv.put( OrderTable.Cols.ITEM_ID, list.get(ii).getId() );
             db.insert(OrderTable.NAME, null, cv);
         }
 

@@ -89,6 +89,7 @@ public class RestaurantFragment extends Fragment
                 public void onClick(View view)
                 {
                     mViewModel.setSelectedRestaurant(r);
+                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, MenuFragment.class, null).commit();
                 }
             });
         }

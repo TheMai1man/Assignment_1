@@ -1,5 +1,6 @@
 package com.example.assignment_1;
 
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -63,6 +64,7 @@ public class LoginFragment extends Fragment
                     {
                         //set as current user
                         mViewModel.setLoggedInUser(user);
+                        mViewModel.setCheckoutConfirm(true);
                     }
                     else
                     {
@@ -96,6 +98,7 @@ public class LoginFragment extends Fragment
                             data.add(user);
                             //setUser
                             mViewModel.setLoggedInUser(user);
+                            mViewModel.setCheckoutConfirm(true);
                         }
                         else
                         {
@@ -115,6 +118,7 @@ public class LoginFragment extends Fragment
         });
 
     }
+
 
     public boolean pwdValid()
     {

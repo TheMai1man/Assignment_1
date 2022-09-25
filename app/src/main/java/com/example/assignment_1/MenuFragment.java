@@ -59,7 +59,7 @@ public class MenuFragment extends Fragment
             {
                 if( mViewModel.getOrderList() != null )
                 {
-                    mViewModel.setCheckout(true);
+                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, CheckoutFragment.class, null).commit();
                 }
                 else
                 {
@@ -106,6 +106,7 @@ public class MenuFragment extends Fragment
                 {
                     //set selected FoodItem
                     mViewModel.setSelectedFoodItem(fi);
+                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, QuantityFragment.class, null).commit();
                     //pop up quantity selection and add to order
                 }
             });
